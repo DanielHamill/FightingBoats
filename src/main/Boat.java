@@ -24,8 +24,12 @@ public class Boat {
 		this.PIECE = boat.PIECE;
 		x = vertical ? new int[WIDTH] : new int[LENGTH]; 
 		y = vertical ? new int[LENGTH] : new int[WIDTH];
-		x[0] = xPos;
-		x[0] = yPos;
+		for(int i=0; i<x.length; i++) {
+			x[i] = xPos+i;
+		}
+		for(int i=0; i<y.length; i++) {
+			y[i] = yPos+i;
+		}
 	}
 	
 	public boolean hit(int xPos, int yPos) {
@@ -67,6 +71,14 @@ public class Boat {
 			if(i!=-1) return false;
 		}
 		return true;
+	}
+
+	public int[] getX() {
+		return x;
+	}
+
+	public int[] getY() {
+		return y;
 	}
 	
 }
