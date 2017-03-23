@@ -59,8 +59,14 @@ public class Boat {
 		return Integer.parseInt(Integer.toString(num).substring(0));
 	}
 	
-//	public boolean sunk() {
-//		
-//	}
+	public boolean sunk() {
+		for(int i: x) {
+			if(i!=-1) return false;
+		}
+		for(int i: y) {
+			if(i!=-1) return false;
+		}
+		return true;
+	}
 	
 }
