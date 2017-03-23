@@ -12,6 +12,25 @@ public class Board {
 	
 	public Board(int length, int height) {
 		
+		
+	}
+	
+	public void setBoat(Boat boat) {
+		
+	}
+	
+	public void drawBoard() {
+		
+	}
+	
+	public boolean hitCell(int xPos, int yPos){
+		return false;
+		
+	}
+	
+	public boolean allBoatsSunk(){
+		return false;
+		
 	}
 	
 }
