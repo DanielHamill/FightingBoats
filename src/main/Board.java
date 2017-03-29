@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 public class Board {
 	
-//	public ArrayList<Boat> boats;
 	private char[][] board;
 	private char hit;
 	private char missed;
 	private char boat;
 	
 	public Board(int length, int height) {
-//		boats = new ArrayList<Boat>();
 		board = new char[length][height];
 		for(int i=0; i<length; i++) {
 			for(int j=0; j<height; j++) {
@@ -21,12 +19,17 @@ public class Board {
 	}
 	
 	public void setBoat(Boat boat) {
-		for(int x=boat.getDistance(); x>=0; x--) {
-			for(int y=0; y<boat.getHeight(); y++) {
-				board[boat.xPos()+x][boat.yPos()+y] = boat.PIECE;
+		for(int x=boat.getDistance(); x>0; x--) {
+			for(int y=boat.getHeight(); y>0; y--) {
+				board[boat.xPos()+x-1][boat.yPos()+y-1] = boat.PIECE;
 			}
 		}
 	}
+	
+	public void hitCell(int xPos, int yPos, char p) {
+		board[xPos][yPos] = 'p';
+	}
+	
 	
 	public void drawBoard() {
 		System.out.println("   A  B  C  D  E  F  G  H  I  J");

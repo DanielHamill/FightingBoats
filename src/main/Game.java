@@ -145,15 +145,24 @@ public class Game {
 			
 			send(x+","+y);
 			boolean hit = recieve().equals("true") ? true : false;
-			if(hit) System.out.println("Hit");
-			else System.out.println("Miss");
+			if(hit) {
+				enemyBoard.hitCell(x, y, 'x');
+				System.out.println("Hit");
+			}
+			else {
+				enemyBoard.hitCell(x, y, 'o');
+				System.out.println("Miss");
+			}
+			enemyBoard.drawBoard();
 		}
 		else {
 			String raw = recieve();
 			int x = Integer.parseInt(raw.substring(0,raw.indexOf(",")));
-			int y = Integer.parseInt(raw.substring(raw.indexOf(",")-1,raw.length()));
+			int y = Integer.parseInt(raw.substring(raw.indexOf(",")+1,raw.length()));
 			boolean hit = hitBoat(x,y);
 			send(Boolean.toString(hit));
+			if(hit)System.out.println("The enemy hit at " + x + "," + y);
+			else System.out.println("The enemy missed");
 		}
 	}
 
