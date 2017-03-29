@@ -1,52 +1,105 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
+import main.Boat.boatType;
+
 public class Game {
+	// board constants
+	private static int BOARD_SIZE = 10;
+	private static int BOAT_AMOUNT = 5;
 	
-	private enum State {SETUP, GAME, END};
 	private Scanner scanner;
 	
-	private boolean running;
+	// networking stuff
 	private String hostName;
-	private State state;
+	Socket socket;
+	PrintStream streamOut;
+//	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
+//	Thread thread;
+//	
+//	Socket socket;
+//	PrintStream streamOut;
+//	MessageIn streamIn;
+	
+	// game data boards and pieces
+	private boolean running;
+	private Board enemyBoard;
+	private Board ownBoard;
+	public ArrayList<Boat> boats;
+	
+	// setup variables
+	int boatToPlace;
+	Boat.boatType[] arr;
 	
 	public Game() {
+		enemyBoard = new Board(BOARD_SIZE,BOARD_SIZE);
+		ownBoard = new Board(BOARD_SIZE,BOARD_SIZE);
+		boats = new ArrayList<Boat>();
+		
 		running = true;
-		state = State.SETUP;
 		mainLoop();
 	}
 	
 	public void mainLoop(){
 		scanner = new Scanner(System.in);
+		boatToPlace = 0;
+		arr = new Boat.boatType[]{boatType.BIG_OL_BOAT, boatType.PLANE_HOLDY_BOAT, boatType.LIL_TINY_BOAT};
+		
 		while(running) {
-			switch(state) {
-				case SETUP: setUp();
-					break;
-				case GAME: game();
-					break;
-				case END: end();
-					break;
-				default: return;
+			try{
+				setUp();
+				game();
+				end();
+			} catch(ArrayIndexOutOfBoundsException e) {
+				System.out.println("That boat does not fit on the board. Try again");
 			}
 		}
 	}
 	
 	public void setUp() {
-		String raw = "";
-		int x = 0;
-		int y = 0;
-		System.out.println("Where would you like to place the ship?");
-		raw = scanner.nextLine();
-		int charIndex = 0;
-		for(int i=0; i<raw.length(); i++) {
-			if(Character.isLetter(raw.charAt(i))) {
-				charIndex = i;
-				break;
-			}
+		if(boats.size()>=BOAT_AMOUNT) return;
+		
+		if(hostName==null) {
+			
 		}
-		x = Integer.parseInt(raw.substring(0,charIndex));
-//		y = Integer.parseInt(Character.toUpraw.substring(charIndex,raw.length()));
+		
+		ownBoard.drawBoard();
+		while(boatToPlace<BOAT_AMOUNT) {
+			String raw = "";
+			int x = 0;
+			int y = 0;
+			int boatIndex = boatToPlace;
+			if(boatToPlace>=arr.length) boatIndex = arr.length-1;
+			
+			System.out.println("You have " + (BOAT_AMOUNT-boatToPlace) + " boats to place.");
+			System.out.println("Where would you like to place the " + Boat.BOAT_INFO[boatIndex*2] + "? " + Boat.BOAT_INFO[boatIndex*2+1]);
+			raw = scanner.nextLine();
+			int charIndex = 0;
+			for(int i=0; i<raw.length(); i++) {
+				if(!Character.isLetter(raw.charAt(i))) {
+					charIndex = i;
+					break;
+				}
+			}
+			x = (int)Character.toUpperCase(raw.charAt(0))-65;
+			y = Integer.parseInt(raw.substring(charIndex,raw.length()))-1;
+			
+			System.out.println("Would you like the boat vertical or horizontal? (v/h)");
+			raw = scanner.nextLine();
+			boolean vertical = true;
+			if(raw.equals("h")) {vertical = false;}
+			
+			boats.add(new Boat(x,y,vertical,arr[boatIndex]));
+			ownBoard.setBoat(boats.get(boats.size()-1));
+			ownBoard.drawBoard();
+			boatToPlace++;
+		}
 	}
 	
 	public void game() {
@@ -59,6 +112,22 @@ public class Game {
 	
 	public void AIMove(){
 		
+	}
+	
+	public boolean hitCell(int xPos, int yPos){
+		for(Boat boat: boats) {
+			if(boat.hit(xPos, yPos)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean allBoatsSunk(){
+		for(Boat boat: boats) {
+			if(!boat.sunk()) return false;
+		}
+		return true;
 	}
 	
 }
