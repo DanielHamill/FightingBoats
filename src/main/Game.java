@@ -71,6 +71,11 @@ public class Game {
 			if(raw.equals("y")) {
 				host = "hosting";
 				socket = new ServerSocket(8080).accept();
+				
+				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
+				streamOut = new PrintStream(socket.getOutputStream());
+				streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()));
+				
 				attacking = Math.random()>.55 ? true : false;
 				if(attacking) send("r");
 				else send("a");
@@ -79,13 +84,15 @@ public class Game {
 				System.out.println("What is the adress you would like to connect to?");
 				host = scanner.nextLine();
 				socket = new Socket(host,8080);
+				
+				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
+				streamOut = new PrintStream(socket.getOutputStream());
+				streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()));
+				
 				String msg = recieve();
 				attacking = msg.equals("a") ? true : false;
 				System.out.println(attacking);
 			}
-			System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
-			streamOut = new PrintStream(socket.getOutputStream());
-			streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()));
 			
 		}
 		
