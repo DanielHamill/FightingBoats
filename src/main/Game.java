@@ -161,7 +161,7 @@ public class Game {
 			int y = Integer.parseInt(raw.substring(raw.indexOf(",")+1,raw.length()));
 			boolean hit = hitBoat(x,y);
 			send(Boolean.toString(hit));
-			if(hit)System.out.println("The enemy hit at " + x + "," + y);
+			if(hit)System.out.println("The enemy hit at " + (char)(x+65) + "," + y+1);
 			else System.out.println("The enemy missed");
 		}
 	}

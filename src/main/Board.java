@@ -27,7 +27,7 @@ public class Board {
 	}
 	
 	public void hitCell(int xPos, int yPos, char p) {
-		board[xPos][yPos] = 'p';
+		board[xPos][yPos] = p;
 	}
 	
 	
