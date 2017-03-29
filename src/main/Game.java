@@ -71,13 +71,14 @@ public class Game {
 			System.out.println("Are you hosting this game? (y/n)");
 			String raw = scanner.nextLine();
 			if(raw.equals("y")) {
-				socket = new ServerSocket(8000).accept();
+				socket = new ServerSocket(8888).accept();
 			}
 			else {
 				System.out.println("What is the adress you would like to connect to?");
 				String ip = scanner.nextLine();
 				socket = new Socket(ip,8000);
 			}
+			System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 			streamOut = new PrintStream(socket.getOutputStream());
 			streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()));
 			
