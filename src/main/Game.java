@@ -1,8 +1,10 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -20,12 +22,10 @@ public class Game {
 	private String hostName;
 	Socket socket;
 	PrintStream streamOut;
-//	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
-//	Thread thread;
-//	
-//	Socket socket;
-//	PrintStream streamOut;
-//	MessageIn streamIn;
+	BufferedReader streamIn;
+
+//streamOut = new PrintStream(socket.getOutputStream());
+//streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()))
 	
 	// game data boards and pieces
 	private boolean running;
@@ -58,14 +58,28 @@ public class Game {
 				end();
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
+			} catch (IOException e) {
+//				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void setUp() {
+	public void setUp() throws IOException {
 		if(boats.size()>=BOAT_AMOUNT) return;
 		
 		if(hostName==null) {
+			System.out.println("Are you hosting this game? (y/n)");
+			String raw = scanner.nextLine();
+			if(raw.equals("y")) {
+				socket = new ServerSocket(8000).accept();
+			}
+			else {
+				System.out.println("What is the adress you would like to connect to?");
+				String ip = scanner.nextLine();
+				socket = new Socket(ip,8000);
+			}
+			streamOut = new PrintStream(socket.getOutputStream());
+			streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()));
 			
 		}
 		
