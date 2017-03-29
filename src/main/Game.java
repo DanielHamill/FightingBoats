@@ -19,19 +19,17 @@ public class Game {
 	private Scanner scanner;
 	
 	// networking stuff
-	private String hostName;
-	Socket socket;
-	PrintStream streamOut;
-	BufferedReader streamIn;
-
-//streamOut = new PrintStream(socket.getOutputStream());
-//streamIn = new BufferedReader (new InputStreamReader(socket.getInputStream()))
+	private String host;
+	private Socket socket;
+	private PrintStream streamOut;
+	private BufferedReader streamIn;
 	
 	// game data boards and pieces
 	private boolean running;
 	private Board enemyBoard;
 	private Board ownBoard;
-	public ArrayList<Boat> boats;
+	private ArrayList<Boat> boats;
+	private boolean attacking;
 	
 	// setup variables
 	int boatToPlace;
@@ -42,15 +40,15 @@ public class Game {
 		ownBoard = new Board(BOARD_SIZE,BOARD_SIZE);
 		boats = new ArrayList<Boat>();
 		
+		scanner = new Scanner(System.in);
+		boatToPlace = 0;
+		arr = new Boat.boatType[]{boatType.BIG_OL_BOAT, boatType.PLANE_HOLDY_BOAT, boatType.LIL_TINY_BOAT};
+		
 		running = true;
 		mainLoop();
 	}
 	
 	public void mainLoop(){
-		scanner = new Scanner(System.in);
-		boatToPlace = 0;
-		arr = new Boat.boatType[]{boatType.BIG_OL_BOAT, boatType.PLANE_HOLDY_BOAT, boatType.LIL_TINY_BOAT};
-		
 		while(running) {
 			try{
 				setUp();
@@ -67,16 +65,23 @@ public class Game {
 	public void setUp() throws IOException {
 		if(boats.size()>=BOAT_AMOUNT) return;
 		
-		if(hostName==null) {
+		if(host==null) {
 			System.out.println("Are you hosting this game? (y/n)");
 			String raw = scanner.nextLine();
 			if(raw.equals("y")) {
-				socket = new ServerSocket(8888).accept();
+				host = "hosting";
+				socket = new ServerSocket(8080).accept();
+				attacking = Math.random()>.55 ? true : false;
+				if(attacking) send("r");
+				else send("a");
 			}
 			else {
 				System.out.println("What is the adress you would like to connect to?");
-				String ip = scanner.nextLine();
-				socket = new Socket(ip,8000);
+				host = scanner.nextLine();
+				socket = new Socket(host,8080);
+				String msg = recieve();
+				attacking = msg.equals("a") ? true : false;
+				System.out.println(attacking);
 			}
 			System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 			streamOut = new PrintStream(socket.getOutputStream());
@@ -118,6 +123,7 @@ public class Game {
 	}
 	
 	public void game() {
+		if(host.equals("host")) send("a");
 		
 	}
 
@@ -127,6 +133,14 @@ public class Game {
 	
 	public void AIMove(){
 		
+	}
+	
+	private void send(String msg) {
+		streamOut.println(msg);
+	}
+	
+	private String recieve() throws IOException {
+		return streamIn.readLine();
 	}
 	
 	public boolean hitCell(int xPos, int yPos){
