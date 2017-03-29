@@ -129,9 +129,32 @@ public class Game {
 		}
 	}
 	
-	public void game() {
-		if(host.equals("host")) send("a");
-		
+	public void game() throws IOException {
+		if(attacking) {
+			System.out.println("Where would you like to attack?");
+			String raw = scanner.nextLine();
+			int charIndex = 0;
+			for(int i=0; i<raw.length(); i++) {
+				if(!Character.isLetter(raw.charAt(i))) {
+					charIndex = i;
+					break;
+				}
+			}
+			int x = (int)Character.toUpperCase(raw.charAt(0))-65;
+			int y = Integer.parseInt(raw.substring(charIndex,raw.length()))-1;
+			
+			send(x+","+y);
+			boolean hit = recieve().equals("true") ? true : false;
+			if(hit) System.out.println("Hit");
+			else System.out.println("Miss");
+		}
+		else {
+			String raw = recieve();
+			int x = Integer.parseInt(raw.substring(0,raw.indexOf(",")));
+			int y = Integer.parseInt(raw.substring(raw.indexOf(",")-1,raw.length()));
+			boolean hit = hitBoat(x,y);
+			send(Boolean.toString(hit));
+		}
 	}
 
 	public void end() {
@@ -150,7 +173,7 @@ public class Game {
 		return streamIn.readLine();
 	}
 	
-	public boolean hitCell(int xPos, int yPos){
+	public boolean hitBoat(int xPos, int yPos){
 		for(Boat boat: boats) {
 			if(boat.hit(xPos, yPos)) {
 				return true;
