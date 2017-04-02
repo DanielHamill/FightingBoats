@@ -57,7 +57,7 @@ public class Game {
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
 			} catch (IOException e) {
-//				e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public class Game {
 			String raw = scanner.nextLine();
 			if(raw.equals("y")) {
 				host = "hosting";
-				socket = new ServerSocket(8080).accept();
+				socket = new ServerSocket(8999).accept();
 				
 				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 				streamOut = new PrintStream(socket.getOutputStream());
@@ -83,7 +83,7 @@ public class Game {
 			else {
 				System.out.println("What is the adress you would like to connect to?");
 				host = scanner.nextLine();
-				socket = new Socket(host,8080);
+				socket = new Socket(host,8999);
 				
 				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 				streamOut = new PrintStream(socket.getOutputStream());
@@ -164,6 +164,7 @@ public class Game {
 			if(hit)System.out.println("The enemy hit at " + (char)(x+65) + "," + y+1);
 			else System.out.println("The enemy missed");
 		}
+//		attacking = !attacking;
 	}
 
 	public void end() {
