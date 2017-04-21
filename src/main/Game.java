@@ -56,6 +56,7 @@ public class Game {
 	public void mainLoop(){
 		while(running) {
 			try{
+				System.out.println(setup);
 				if(!setup)
 					setUp();
 				else
@@ -65,20 +66,25 @@ public class Game {
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
 			} catch (IOException e) {
+				
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void setUp() throws IOException {
-		if(boats.size()>=BOAT_AMOUNT) return;
+	public void setUp() throws IOException, NumberFormatException{
+		if(boats.size()>=BOAT_AMOUNT) {
+			setup = true;
+			return;
+		}
 
 		if(host==null) {
 			System.out.println("Are you hosting this game? (y/n)");
 			String raw = scanner.nextLine();
 			if(raw.equals("y")) {
 				host = "hosting";
-				socket = new ServerSocket(8999).accept();
+				socket = new ServerSocket(8888).accept();
 
 				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 				streamOut = new PrintStream(socket.getOutputStream());
@@ -91,7 +97,7 @@ public class Game {
 			else {
 				System.out.println("What is the adress you would like to connect to?");
 				host = scanner.nextLine();
-				socket = new Socket(host,8999);
+				socket = new Socket(host,8888);
 
 				System.out.println("Connected to " + socket.getInetAddress().getHostName()); 
 				streamOut = new PrintStream(socket.getOutputStream());
@@ -104,7 +110,7 @@ public class Game {
 
 		}
 		if(boatToPlace==0) ownBoard.drawBoard();
-		if(boatToPlace<BOAT_AMOUNT) setup = false;
+//		if(boatToPlace<BOAT_AMOUNT) setup = false;
 		String raw = "";
 		int x = 0;
 		int y = 0;
@@ -158,7 +164,7 @@ public class Game {
 				}
 			}
 			int x = (int)Character.toUpperCase(raw.charAt(0))-65;
-			int y = Integer.parseInt(raw.substring(charIndex,raw.length()))-1;
+			int y = Integer.parseInt(raw.substring(1,raw.length()))-1;
 
 			send(x+","+y);
 			boolean hit = recieve().equals("true") ? true : false;

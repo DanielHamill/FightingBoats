@@ -2,7 +2,7 @@ package main;
 
 public class Boat {
 	
-	public enum boatType{BIG_OL_BOAT, PLANE_HOLDY_BOAT, LIL_TINY_BOAT};
+	public static enum boatType{BIG_OL_BOAT, PLANE_HOLDY_BOAT, LIL_TINY_BOAT};
 	public static String[] BOAT_INFO = {"Big 'Ol Boat", "5x1", "Plane Holdy Boat", "3x2", "Lil Tiny Boat", "2x1"};
 
 	public final int LENGTH;
