@@ -56,12 +56,11 @@ public class Game {
 	public void mainLoop(){
 		while(running) {
 			try{
-				System.out.println(setup);
 				if(!setup)
 					setUp();
-				else
+				else if(!gameOver)
 					game();
-				if(gameOver)
+				else
 					end();
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
@@ -168,6 +167,9 @@ public class Game {
 
 			send(x+","+y);
 			boolean hit = recieve().equals("true") ? true : false;
+			if(recieve().equals("true")) {
+				gameOver = true;
+			}
 			if(hit) {
 				enemyBoard.hitCell(x, y, 'x');
 				System.out.println("Hit");
@@ -187,12 +189,14 @@ public class Game {
 			send(Boolean.toString(hit));
 			if(hit)System.out.println("The enemy hit at " + (char)(x+65) + "," + y+1);
 			else System.out.println("The enemy missed");
+			send(Boolean.toString(allBoatsSunk()));
 		}
 		attacking = !attacking;
+		
 	}
 
 	public void end() {
-
+		System.out.println("test");
 	}
 
 	public void AIMove(){
