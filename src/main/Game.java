@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
 import main.Boat.boatType;
 
 public class Game {
@@ -64,8 +66,10 @@ public class Game {
 					end();
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
+//				e.printStackTrace();
 			} catch (IOException e) {
 				System.out.println("Sorry, you are experiencing connection issues");
+				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -93,7 +97,7 @@ public class Game {
 				if(attacking) send("r");
 				else send("a");
 			}
-			else {
+			else if(raw.equals("n")){
 				System.out.println("What is the adress you would like to connect to?");
 				host = scanner.nextLine();
 				socket = new Socket(host,8888);
@@ -104,7 +108,10 @@ public class Game {
 
 				String msg = recieve();
 				attacking = msg.equals("a") ? true : false;
-				System.out.println(attacking);
+			}
+			else {
+				System.out.println("Sorry, please only input \"y\" or \"n\"");
+				return;
 			}
 
 		}
@@ -142,6 +149,7 @@ public class Game {
 					System.out.println("Sorry, there is already a boat there. Place it somewhere else");
 					return;
 				}
+				char ch = ownBoard.getBoard()[x][y];
 			}
 		}
 
@@ -164,6 +172,15 @@ public class Game {
 			}
 			int x = (int)Character.toUpperCase(raw.charAt(0))-65;
 			int y = Integer.parseInt(raw.substring(1,raw.length()))-1;
+			
+			// ERROR CHECKING - OFFBOARD
+			char ch = ownBoard.getBoard()[x][y];
+			
+			// ERROR CHECKING - ALREADY ATTACKED
+			if(enemyBoard.getBoard()[x][y] == 'x' || enemyBoard.getBoard()[x][y] == 'o') {
+				System.out.println("You already attacked there, try again");
+				return;
+			}
 
 			send(x+","+y);
 			boolean hit = recieve().equals("true") ? true : false;
