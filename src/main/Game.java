@@ -14,7 +14,7 @@ import main.Boat.boatType;
 public class Game {
 	// board constants
 	private static int BOARD_SIZE = 10;
-	private static int BOAT_AMOUNT = 5;
+	private static int BOAT_AMOUNT = 1;
 
 	private Scanner scanner;
 
@@ -65,7 +65,7 @@ public class Game {
 			} catch(ArrayIndexOutOfBoundsException e) {
 				System.out.println("That boat does not fit on the board. Try again");
 			} catch (IOException e) {
-				
+				System.out.println("Sorry, you are experiencing connection issues");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -190,13 +190,17 @@ public class Game {
 			if(hit)System.out.println("The enemy hit at " + (char)(x+65) + "," + y+1);
 			else System.out.println("The enemy missed");
 			send(Boolean.toString(allBoatsSunk()));
+			if(allBoatsSunk()) gameOver = true;
 		}
 		attacking = !attacking;
 		
 	}
 
-	public void end() {
-		System.out.println("test");
+	public void end() throws IOException {
+		String outcome = allBoatsSunk() ? "lost..." : "won!";
+		System.out.println("Game Over, you " + outcome);
+		socket.close();
+		running = false;
 	}
 
 	public void AIMove(){
@@ -226,5 +230,6 @@ public class Game {
 		}
 		return true;
 	}
+	
 
 }
